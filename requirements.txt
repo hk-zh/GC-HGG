@@ -23,6 +23,7 @@ glfw==1.8.5
 glob2~=0.6
 google-pasta==0.1.8
 grpcio==1.25.0
+gym==0.18.3
 h5py==2.10.0
 idna==2.8
 ImageHash==4.0

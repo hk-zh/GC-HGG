@@ -1,0 +1,37 @@
+# KukaPickAndPlaceObstacle
+python train.py --tag 520 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.3 --balance_eta 1000
+python train.py --tag 521 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.3 --balance_eta 1000
+python train.py --tag 522 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.3 --balance_eta 500
+python train.py --tag 523 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.3 --balance_eta 500
+python train.py --tag 524 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.3 --balance_eta 5000
+python train.py --tag 525 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.3 --balance_eta 5000
+
+python train.py --tag 526 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.37 --balance_eta 1000
+python train.py --tag 527 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.37 --balance_eta 1000
+python train.py --tag 528 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.4 --balance_eta 1000
+python train.py --tag 529 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 11 --stop_hgg_threshold 0.3 --curriculum True --balance_sigma 0.4 --balance_eta 1000
+
+# KukaPushNew
+python train.py --tag 1023 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.3 --balance_eta 500
+python train.py --tag 1024 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.3 --balance_eta 500
+python train.py --tag 1025 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.3 --balance_eta 5000
+python train.py --tag 1026 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.3 --balance_eta 5000
+
+python train.py --tag 1027 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.37 --balance_eta 1000
+python train.py --tag 1028 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.37 --balance_eta 1000
+python train.py --tag 1029 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.4 --balance_eta 1000
+python train.py --tag 10210 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True --balance_sigma 0.4 --balance_eta 1000
+
+# KukaReach
+python train.py --tag 420 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.3 --balance_eta 1000
+python train.py --tag 421 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.3 --balance_eta 1000
+python train.py --tag 422 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.3 --balance_eta 500
+python train.py --tag 423 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.3 --balance_eta 500
+python train.py --tag 424 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.3 --balance_eta 5000
+python train.py --tag 425 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.3 --balance_eta 5000
+
+python train.py --tag 426 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.37 --balance_eta 1000
+python train.py --tag 427 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.37 --balance_eta 1000
+python train.py --tag 428 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.4 --balance_eta 1000
+python train.py --tag 429 --learn hgg --env KukaReach-v1 --stop_hgg_threshold 0.3 --curriculum --epoch 5 --balance_sigma 0.4 --balance_eta 1000
+

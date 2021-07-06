@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+
+<mujoco>
+  <compiler angle="radian" coordinate="local" meshdir="meshes_R800/"/>
+
+  <option>
+    <flag gravity="enable"/>
+  </option>
+
+
+  <default>
+    <joint damping="0.5"/>
+    <default class="visual">
+      <geom contype="0" conaffinity="0"/>
+    </default>
+    <default class="collision">
+      <geom contype="1" conaffinity="1" friction=".6 0.005 0.0001"/>
+    </default>
+
+    <default class="fetchGripper">
+        <geom condim="4" margin="0.001" type="box" user="0" rgba="0.356 0.361 0.376 1.0"/>
+        <joint armature="100" damping="1000" limited="true" solimplimit="0.99 0.999 0.01" solreflimit="0.01 1" type="slide"/>
+    </default>
+    <site rgba="1 0 0 .5"/>
+  </default>
+
+  <asset>
+    <include file="kuka_R800/kuka_assets.xml"/>
+    <texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2=".6 .8 1" width="256" height="256"/>
+    <material name="block_mat" specular="0" shininess="0.5" reflectance="0" rgba="0.2 0.2 0.2 1"/>
+  </asset>
+
+  <equality>
+        <weld body1="kuka_mocap" body2="needle_tip" solimp="0.9 0.95 0.001" solref="0.02 1"/>
+  </equality>
+
+
+  <worldbody>
+    <body mocap="true" name="kuka_mocap" pos="needle_tip" quat = "1 0 1 0">
+		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0.7" size="0.005 0.005 0.005" type="box"/>
+		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0.1" size="1 0.005 0.005" type="box"/>
+		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0.1" size="0.005 1 0.001" type="box"/>
+		<geom conaffinity="0" contype="0" pos="0 0 0" rgba="0 0.5 0 0.1" size="0.005 0.005 1" type="box"/>
+    </body>
+    <light pos="0 0 1000" castshadow="false"/>
+    <geom class="collision" type="plane" size="10 10 1" rgba=".8 .8 .8 1"/>
+    <body name="experiment_table" pos="0 0 0.85">
+        <geom class="collision" type="box" size="0.25 0.35 0.2" pos="0.75 0 -.2" rgba="1 1 1 1"/>
+        <geom class="collision" type="box" size="0.185 0.04 0.075" pos="0.685 0 0.075" rgba="0.0 0.5 0.9 1"/>
+        <site name="spacesite" size="0.25 0.35 0.2" rgba="0 0 1 0.05" pos="0.75 0 0.2" type="box"/>
+        <site name="target_center" pos="0.65 -0.2 0" size="0.02 0.02 0.02" rgba="0 0 1 0" type="sphere"/>
+        <site name="init_center" pos="0.65 0.22 0" size="0.02 0.02 0.02" rgba="0 0 1 0" type="sphere"/>
+        <site name="init_1" pos="-1.875 0.45 0.2" size="0.02 0.02 0.02" rgba="0 1 0 0" type="sphere"/>
+        <site name="init_2" pos="-1.25 0.45 0.2" size="0.02 0.02 0.02" rgba="0 1 0 0" type="sphere"/>
+        <site name="init_3" pos="-0.625 0.45 0.2" size="0.02 0.02 0.02" rgba="0 1 0 0" type="sphere"/>
+        <site name="init_4" pos="0 0.45 0.2" size="0.02 0.02 0.02" rgba="0 1 0 0" type="sphere"/>
+        <site name="mark1" pos="0.625 0.45 0.2" size="0.02 0.02 0.02" rgba="0 0 1 0" type="sphere"/>
+        <site name="mark2" pos="1.25 0.45 0.2" size="0.02 0.02 0.02" rgba="0 0 1 0" type="sphere"/>
+        <site name="mark3" pos="1.875 0.45 0.2" size="0.02 0.02 0.02" rgba="0 0 1 0" type="sphere"/>
+        <site name="mark4" pos="-1.875 -0.45 0.2" size="0.02 0.02 0.02" rgba="0 0 1 0" type="sphere"/>
+        <site name="target0" pos="-0.2 0 0.5" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"/>
+    </body>
+    <body name="kuka_table" pos="0 0 1">
+      <geom class="collision" type="box" size=".4 .5 .5" pos="0 0 -.5" rgba="1 1 1 1"/>
+      <body name="kuka_base" pos="0.2 0 0">
+        <include file="kuka_R800/kuka_mesh_collision_needle.xml"/>
+      </body>
+    </body>
+    <body name="object0" pos="0.75 0.2 0.875">
+        <joint name="object0:joint" type="free" damping="0.01"/>
+        <geom size="0.02 0.02 0.02" type="box" condim="3" name="object0" material="block_mat" mass="0.2" />
+        <site name="object0" pos="0 0 0" size="0.015 0.015 0.015" rgba="1 0 0 1" type="sphere"/>
+	</body>
+  </worldbody>
+
+  <actuator>
+
+  </actuator>
+
+  <sensor>
+    <include file="peg/peg_sensors.xml" />
+  </sensor>
+
+</mujoco>

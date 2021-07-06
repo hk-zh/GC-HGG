@@ -1,0 +1,4 @@
+<mujoco>
+    <position ctrllimited="true" ctrlrange="0 0.12" joint="l_gripper_finger_joint" kp="30000" name="l_gripper_finger_joint" user="1"/>
+    <position ctrllimited="true" ctrlrange="0 0.12" joint="r_gripper_finger_joint" kp="30000" name="r_gripper_finger_joint" user="1"/>
+</mujoco>

@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+
+<mujoco>
+  <body name="kuka_link_0">
+    <!-- <geom class="collision" type="mesh" mesh="kuka_link_0_mesh"/> -->
+    <geom class="visual" type="mesh" mesh="kuka_link_0_mesh" material="kuka_grey"/>
+    <body name="kuka_link_1" pos="0 0 0">
+      <joint name="kuka_joint_1" axis="0 0 1" limited="true" range="-2.96705972839 2.96705972839" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+      <inertial euler="0 0 0" pos="0 -0.035 0.271" mass="3.4821" diaginertia="0.02076 0.02179 0.00779"/>
+      <geom class="visual" type="mesh" mesh="kuka_link_1_mesh" material="kuka_grey"/>
+      <geom class="collision" type="mesh" mesh="kuka_link_1_mesh" />
+      <body name="kuka_link_2"  pos="0 0 0">
+        <joint name="kuka_joint_2" axis="0 1 0" limited="true" range="-2.09439510239 2.09439510239" pos="0 0 0.34" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+        <inertial euler="0 0 0" pos="0 0.34 0.407" mass="4.05623" diaginertia="0.03204 0.00972 0.03042"/>
+        <geom class="collision" type="mesh" mesh="kuka_link_2_mesh"/>
+        <geom class="visual" type="mesh" mesh="kuka_link_2_mesh" material="kuka_orange"/>
+        <body name="kuka_link_3"  pos="0 0 0">
+          <joint name="kuka_joint_3" axis="0 0 1" limited="true" range="-2.96705972839 2.96705972839" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+          <inertial euler="0 0 0" pos="0 0.03 0.651" mass="3.4822" diaginertia="0.02178 0.02075 0.007785"/>
+          <geom class="collision" type="mesh" mesh="kuka_link_3_mesh"/>
+          <geom class="visual" type="mesh" mesh="kuka_link_3_mesh" material="kuka_grey"/>
+          <body name="kuka_link_4"  pos="0 0 0">
+            <joint name="kuka_joint_4" axis="0 -1 0" limited="true" range="-2.09439510239 2.09439510239" pos="0 0 0.74" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+            <inertial euler="0 0 0" pos="0 -0.034 0.807" mass="2.1633" diaginertia="0.01287  0.005708  0.01112"/>
+            <geom class="collision" type="mesh" mesh="kuka_link_4_mesh"/>
+            <geom class="visual" type="mesh" mesh="kuka_link_4_mesh" material="kuka_orange"/>
+            <body name="kuka_link_5"  pos="0 0 0">
+              <joint name="kuka_joint_5" axis="0 0 1" limited="true" range="-2.96705972839 2.96705972839" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+              <inertial euler="0 0 0" pos="0.0 -0.021 1" mass="2.3466" diaginertia="0.006509 0.006259 0.004527"/>
+              <geom class="collision" type="mesh" mesh="kuka_link_5_mesh"/>
+              <geom class="visual" type="mesh" mesh="kuka_link_5_mesh" material="kuka_grey"/>
+              <body name="kuka_link_6"  pos="0 0 0">
+                <joint name="kuka_joint_6" axis="0 1 0" limited="true" range="-2.09439510239 2.09439510239" pos="0 0 1.14" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+                <inertial euler="0 0 0" pos="0 0.0004 1.142" mass="2" diaginertia="0.01464 0.01465 0.002872"/>
+                <geom class="collision" type="mesh" mesh="kuka_link_6_mesh"/>
+                <geom class="visual" type="mesh" mesh="kuka_link_6_mesh" material="kuka_orange"/>
+                <body name="kuka_link_7"  pos="0 0 0">
+                  <joint name="kuka_joint_7" axis="0 0 1" limited="true" range="-3.05432619099 3.05432619099" armature="1" damping="50" frictionloss="0" stiffness="10"/>
+                  <inertial euler="0 0 0" pos="0 0 1.241" mass="1.129" diaginertia="0.001 0.001 0.001"/>
+                  <geom class="collision" type="mesh" mesh="kuka_link_7_mesh"/>
+                  <geom class="visual" type="mesh" mesh="kuka_link_7_mesh" material="kuka_grey"/>
+                  <body name="needle_entity" pos="0 0 1.22">
+                     <site name="ee_site" pos="0 0 0.05" euler="0 0 0" size="0.005, 0.005, 0.005"/>
+                     <include file="needle/needle_collision.xml"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </body>
+</mujoco>

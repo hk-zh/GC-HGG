@@ -1,0 +1,21 @@
+<mujoco>
+  <body name="gripper" euler="0 0 0" pos="0 0 0.05">
+      <inertial pos="0 0 0" mass="0.5"/>
+      <geom class="collision" type="cylinder" pos="0 0 0.01862" size="0.031 0.01862"/>
+      <geom class="collision" type="box" pos="0 0 0.042" size="0.02041 0.049 0.00476"/>
+      <body childclass="fetchGripper" name="r_gripper_finger_link" pos="0 0.0159 0.08526">
+          <inertial diaginertia="0.1 0.1 0.1" mass="0.4" pos="-0.01 0 0"/>
+          <joint axis="0 1 0" name="r_gripper_finger_joint" range="0 0.035"/>
+          <geom pos="0 -0.008 0" size="0.0135 0.007 0.0385" type="box" name="r_gripper_finger_link" condim="4" friction="1 0.05 0.01"/>
+      </body>
+      <body childclass="fetchGripper" name="l_gripper_finger_link" pos="0 -0.0159 0.08526">
+          <inertial diaginertia="0.1 0.1 0.1" mass="0.4" pos="-0.01 0 0"/>
+          <joint axis="0 -1 0" name="l_gripper_finger_joint" range="0 0.035"/>
+          <geom pos="0 0.008 0" size="0.0135 0.007 0.0385" type="box" name="l_gripper_finger_link" condim="4" friction="1 0.05 0.01"/>
+      </body>
+      <body name="gripper_tip" pos="0 0 0.11289" euler="0 0 0" >
+          <site name="gripper_tip" pos="0 0 0" quat="1 0 0 0" size="0.005, 0.005, 0.005"/>
+      </body>
+      <site name="peg_ft_site" pos="0 0 0" euler="0 0 0" size="0.005, 0.005, 0.005"/>
+  </body>
+</mujoco>

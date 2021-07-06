@@ -1,0 +1,9 @@
+<mujoco>
+  <motor name="kuka_joint_1" ctrllimited="true" ctrlrange="-176.0 176.0" joint="kuka_joint_1"/>
+  <motor name="kuka_joint_2" ctrllimited="true" ctrlrange="-176.0 176.0" joint="kuka_joint_2"/>
+  <motor name="kuka_joint_3" ctrllimited="true" ctrlrange="-110.0 110.0" joint="kuka_joint_3"/>
+  <motor name="kuka_joint_4" ctrllimited="true" ctrlrange="-110.0 110.0" joint="kuka_joint_4"/>
+  <motor name="kuka_joint_5" ctrllimited="true" ctrlrange="-110.0 110.0" joint="kuka_joint_5"/>
+  <motor name="kuka_joint_6" ctrllimited="true" ctrlrange="-40.0 40.0" joint="kuka_joint_6"/>
+  <motor name="kuka_joint_7" ctrllimited="true" ctrlrange="-40.0 40.0" joint="kuka_joint_7"/>
+</mujoco>

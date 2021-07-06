@@ -1,0 +1,16 @@
+*.log
+*.temp
+/venv
+/toplot
+/figures
+/log
+/gym
+/src
+/videos
+.idea
+/hindsightGoals
+**/__pycache__/
+/policies
+
+
+

@@ -11,12 +11,9 @@
 ```bash
 pip install -r requirements.txt
 ```
-
-7. Trained policies can be downloaded here: 
-https://syncandshare.lrz.de/getlink/fi3bpt4FQCa7feH5LaQ5X1E8/policies.zip
   
-8. Videos about Kuka Environments can be found here:
-https://sites.google.com/view/kukaenv/
+7. Videos about Kuka Environments can be found here:
+https://videoviewsite.wixsite.com/gc-hgg
 
 ## New Kuka Environments
 <img width="1920" alt="KukaReach" src="https://user-images.githubusercontent.com/57254021/124595467-57bb0380-de61-11eb-8597-7e83e4c140d0.png">
@@ -74,20 +71,19 @@ python train.py --tag 1050 --learn normal --env KukaPushNew-v1 --epoch 20 --curr
 ## Playing 
 
 To look at the agent solving the respective task according to his learned policy, issue the following command:
-(Please first download policies from https://syncandshare.lrz.de/getlink/fi3bpt4FQCa7feH5LaQ5X1E8/policies.zip)
 ### Kuka Environments
 ```bash
 # Scheme: python play.py --env env_id --goal custom --play_path log_dir --play_epoch <epoch number, latest or best>
 
 # KukaReach
-python play.py --env KukaReach-v1 --play_path policies/KukaReach/400-ddpg-KukaReach-v1-normal --play_epoch best
+python play.py --env KukaReach-v1 --play_path log/400-ddpg-KukaReach-v1-normal --play_epoch best
 
 # KukaPickAndPlaceObstacle
-python play.py --env KukaPickAndPlaceObstacle-v1 --play_path policies/KukaPickAndPlaceObstacle/520-ddpg-KukaPickAndPlaceObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
+python play.py --env KukaPickAndPlaceObstacle-v1 --play_path log/520-ddpg-KukaPickAndPlaceObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
 
 # KukaPickNoObstacle
-python play.py --env KukaPickNoObstacle-v1 --play_path policies/KukaPickNoObstacle/620-ddpg-KukaPickNoObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
+python play.py --env KukaPickNoObstacle-v1 --play_path log/620-ddpg-KukaPickNoObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
 
 #KukaPushNew
-python play.py --env KukaPushNew-v1 --play_path policies/KukaPushNew/1020-ddpg-KukaPushNew-v1-hgg-graph-stop-curriculum --play_epoch best
+python play.py --env KukaPushNew-v1 --play_path log/1020-ddpg-KukaPushNew-v1-hgg-graph-stop-curriculum --play_epoch best
 ```

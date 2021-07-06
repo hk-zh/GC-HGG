@@ -19,10 +19,11 @@ https://syncandshare.lrz.de/getlink/fi3bpt4FQCa7feH5LaQ5X1E8/policies.zip
 https://sites.google.com/view/kukaenv/
 
 ## New Kuka Environments
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaReach.png)
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaPush.png)
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaPickNoObstacle.png)
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaPickObstacle.png)
+<img width="1920" alt="KukaPickNoObstacle" src="https://user-images.githubusercontent.com/57254021/124595454-52f64f80-de61-11eb-9287-64482f531d41.png">
+<img width="1920" alt="KukaPickObstacle" src="https://user-images.githubusercontent.com/57254021/124595460-55f14000-de61-11eb-9c60-09e2230e555a.png">
+<img width="1920" alt="KukaPush" src="https://user-images.githubusercontent.com/57254021/124595464-57226d00-de61-11eb-9120-6a37e965c7cb.png">
+<img width="1920" alt="KukaReach" src="https://user-images.githubusercontent.com/57254021/124595467-57bb0380-de61-11eb-8597-7e83e4c140d0.png">
+
 ## Training under different environments
 
 The following commands are used to train the agent in different environments with HGG, HER, G-HGG, C-HGG.

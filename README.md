@@ -1,4 +1,4 @@
-# Curriculum-guided Hindsight Goal Generation under Kuka-Environment
+# Hindsight Goal Generation Based on Graph-Based Diversity and Proximity
 
 
 ## Requirements

@@ -33,7 +33,7 @@ Note that new Kuka Environments are introduced.
 ## KukaReach
 python train.py --tag 400 --learn normal --env KukaReach-v1 
 #GC-HGG
-python train.py --tag 410 --learn hgg --env KukaReach-v1 --curriculum --stop_hgg_threshold 0.3
+python train.py --tag 410 --learn hgg --env KukaReach-v1 --curriculum True --stop_hgg_threshold 0.3
 #CHER
 python train.py --tag 450 --learn normal --env KukaReach-v1 --curriculum True --batch_size 64 --buffer_size 500 --epoch 10
 
@@ -72,7 +72,7 @@ python train.py --tag 1050 --learn normal --env KukaPushNew-v1 --epoch 20 --curr
 ## Playing 
 
 To look at the agent solving the respective task according to his learned policy, issue the following command:
-(Please first download policies from https://drive.google.com/drive/folders/1DtDvDqeNXQ-Qs3ANQw_60AFtSYeabg7m?usp=sharing)
+(Please first download policies from https://syncandshare.lrz.de/getlink/fi3bpt4FQCa7feH5LaQ5X1E8/policies.zip)
 ### Kuka Environments
 ```bash
 # Scheme: python play.py --env env_id --goal custom --play_path log_dir --play_epoch <epoch number, latest or best>

@@ -1,4 +1,4 @@
-# Curriculum-guided Hindsight Goal Generation under Kuka-Environment
+# Hindsight Goal Generation Based on Graph-Based Diversity and Proximity
 
 
 ## Requirements
@@ -11,18 +11,17 @@
 ```bash
 pip install -r requirements.txt
 ```
-
-7. Trained policies can be downloaded here: 
-https://syncandshare.lrz.de/getlink/fi3bpt4FQCa7feH5LaQ5X1E8/policies.zip
   
-8. Videos about Kuka Environments can be found here:
-https://sites.google.com/view/kukaenv/
+7. Videos about Kuka Environments can be found here:
+https://videoviewsite.wixsite.com/gc-hgg
 
 ## New Kuka Environments
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaReach.png)
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaPush.png)
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaPickNoObstacle.png)
-![image](https://github.com/Hongkuan-Zhou/C-HGG/blob/main/Image/KukaPickObstacle.png)
+<img width="1920" alt="KukaReach" src="https://user-images.githubusercontent.com/57254021/124595467-57bb0380-de61-11eb-8597-7e83e4c140d0.png">
+<img width="1920" alt="KukaPickNoObstacle" src="https://user-images.githubusercontent.com/57254021/124595454-52f64f80-de61-11eb-9287-64482f531d41.png">
+<img width="1920" alt="KukaPickObstacle" src="https://user-images.githubusercontent.com/57254021/124595460-55f14000-de61-11eb-9c60-09e2230e555a.png">
+<img width="1920" alt="KukaPush" src="https://user-images.githubusercontent.com/57254021/124595464-57226d00-de61-11eb-9120-6a37e965c7cb.png">
+
+
 ## Training under different environments
 
 The following commands are used to train the agent in different environments with HGG, HER, G-HGG, C-HGG.
@@ -33,7 +32,7 @@ Note that new Kuka Environments are introduced.
 ## KukaReach
 python train.py --tag 400 --learn normal --env KukaReach-v1 
 #GC-HGG
-python train.py --tag 410 --learn hgg --env KukaReach-v1 --curriculum --stop_hgg_threshold 0.3
+python train.py --tag 410 --learn hgg --env KukaReach-v1 --curriculum True --stop_hgg_threshold 0.3
 #CHER
 python train.py --tag 450 --learn normal --env KukaReach-v1 --curriculum True --batch_size 64 --buffer_size 500 --epoch 10
 
@@ -72,20 +71,19 @@ python train.py --tag 1050 --learn normal --env KukaPushNew-v1 --epoch 20 --curr
 ## Playing 
 
 To look at the agent solving the respective task according to his learned policy, issue the following command:
-(Please first download policies from https://drive.google.com/drive/folders/1DtDvDqeNXQ-Qs3ANQw_60AFtSYeabg7m?usp=sharing)
 ### Kuka Environments
 ```bash
 # Scheme: python play.py --env env_id --goal custom --play_path log_dir --play_epoch <epoch number, latest or best>
 
 # KukaReach
-python play.py --env KukaReach-v1 --play_path policies/KukaReach/400-ddpg-KukaReach-v1-normal --play_epoch best
+python play.py --env KukaReach-v1 --play_path log/400-ddpg-KukaReach-v1-normal --play_epoch best
 
 # KukaPickAndPlaceObstacle
-python play.py --env KukaPickAndPlaceObstacle-v1 --play_path policies/KukaPickAndPlaceObstacle/520-ddpg-KukaPickAndPlaceObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
+python play.py --env KukaPickAndPlaceObstacle-v1 --play_path log/520-ddpg-KukaPickAndPlaceObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
 
 # KukaPickNoObstacle
-python play.py --env KukaPickNoObstacle-v1 --play_path policies/KukaPickNoObstacle/620-ddpg-KukaPickNoObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
+python play.py --env KukaPickNoObstacle-v1 --play_path log/620-ddpg-KukaPickNoObstacle-v1-hgg-graph-stop-curriculum --play_epoch best
 
 #KukaPushNew
-python play.py --env KukaPushNew-v1 --play_path policies/KukaPushNew/1020-ddpg-KukaPushNew-v1-hgg-graph-stop-curriculum --play_epoch best
+python play.py --env KukaPushNew-v1 --play_path log/1020-ddpg-KukaPushNew-v1-hgg-graph-stop-curriculum --play_epoch best
 ```

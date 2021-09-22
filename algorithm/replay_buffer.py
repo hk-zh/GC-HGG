@@ -483,13 +483,13 @@ class ReplayBuffer_Episodic:
         batch_size = self.args.batch_size
         batch = dict(obs=[], obs_next=[], acts=[], rews=[], done=[])
         batches = []
-        N = 20
+        N = 15
         for i in range(N):
             batches.append([])
         sel_batch = None
         F_max = float('-inf')
         # self.iter_balance = self.iter_balance * (1 + self.tau)
-        executor = ThreadPoolExecutor(max_workers = 20)
+        executor = ThreadPoolExecutor(max_workers = 15)
         thread_list = []
         for i in range(N):
             t = executor.submit(self.computeF, (batch_size))

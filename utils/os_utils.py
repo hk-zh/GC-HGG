@@ -69,19 +69,19 @@ def load_npz_info(file_path):
 class Logger:
     def __init__(self, name):
         make_dir('log', clear=False)
-        make_dir('log/text', clear=False)
+        make_dir(os.path.join('log', 'text'), clear=False)
         if name is None:
             self.name = time.strftime('%Y-%m-%d-%H:%M:%S')
         else:
             self.name = name + time.strftime('-(%Y-%m-%d-%H:%M:%S)')
 
-        self.my_log_dir = "log/{}/".format(name)
-        log_file = self.my_log_dir + "output.log"
+        self.my_log_dir = os.path.join("log", "{}".format(name))
+        log_file = os.path.join(self.my_log_dir, "output.log")
         self.logger = logging.getLogger(log_file)
         self.logger.setLevel(logging.DEBUG)
 
         make_dir(self.my_log_dir, clear=True)
-        self.csv_file_path = "{}progress.csv".format(self.my_log_dir)
+        self.csv_file_path = os.path.join(self.my_log_dir, "progress.cvs")
 
         FileHandler = logging.FileHandler(log_file)
         FileHandler.setLevel(logging.DEBUG)
@@ -125,8 +125,8 @@ class Logger:
             self.counts[key] = 0
 
     def summary_init(self, graph, sess):
-        make_dir('log/board', clear=False)
-        self.summary_writer = SummaryWriter(graph, sess, 'log/board/' + self.name)
+        make_dir(os.path.join('log', 'board'), clear=False)
+        self.summary_writer = SummaryWriter(graph, sess, os.path.join('log', 'board') + self.name)
 
     def summary_setup(self):
         self.summary_writer.setup()
@@ -209,14 +209,14 @@ class Logger:
         print(table_c)
 
     def save_npz(self, info, info_name, folder, subfolder=''):
-        make_dir('log/' + folder, clear=False)
-        make_dir('log/' + folder + '/' + self.name, clear=False)
+        make_dir(os.path.join('log', folder), clear=False)
+        make_dir(os.path.join('log', folder, self.name), clear=False)
         if subfolder != '':
-            make_dir('log/' + folder + '/' + self.name + '/' + subfolder, clear=False)
-            save_path = 'log/' + folder + '/' + self.name + '/' + subfolder
+            make_dir(os.path.join('log', folder, self.name, subfolder), clear=False)
+            save_path = os.path.join('log', folder, self.name, subfolder)
         else:
-            save_path = 'log/' + folder + '/' + self.name
-        np.savez(save_path + '/' + info_name + '.npz', info=info)
+            save_path = os.path.join('log', folder, self.name)
+        np.savez(os.path.join(save_path, info_name+'.npz'), info=info)
 
     def save_agent(self, data, mode):  # TODO: new
         # pickles current agent for later inspection
@@ -285,7 +285,7 @@ class SummaryWriter:
 
     def register_writer(self, summary_path, graph=None):
         make_dir(summary_path, clear=False)
-        return tf.summary.FileWriter(summary_path, graph=graph)
+        return tf.compat.v1.summary.FileWriter(summary_path, graph=graph)
 
     def setup(self):
         with self.graph.as_default():
@@ -306,12 +306,12 @@ class SummaryWriter:
                         self.summary_ph[key] = tf.placeholder(tf.float32, name=key)
                         self.summary.append(tf.summary.scalar(key, self.summary_ph[key], family='train'))
 
-            self.summary_op = tf.summary.merge(self.summary)
-            self.writer = self.register_writer(self.summary_path + '/debug', self.graph)
+            self.summary_op = tf.compat.v1.summary.merge(self.summary)
+            self.writer = self.register_writer(os.path.join(self.summary_path, 'debug'), self.graph)
             if len(self.summary_cmp) > 0:
-                self.summary_cmp_op = tf.summary.merge(self.summary_cmp)
-                self.train_writer = self.register_writer(self.summary_path + '/train')
-                self.test_writer = self.register_writer(self.summary_path + '/test')
+                self.summary_cmp_op = tf.compat.v1.summary.merge(self.summary_cmp)
+                self.train_writer = self.register_writer(os.path.join(self.summary_path, 'train'))
+                self.test_writer = self.register_writer(os.path.join(self.summary_path, 'test'))
 
     def show(self, steps):
         feed_dict = {'debug': {}, 'train': {}, 'test': {}}

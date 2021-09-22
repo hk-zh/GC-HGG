@@ -87,10 +87,12 @@ if __name__ == "__main__":
         elif args.naming == 1:
             # only compare curriculum(graph-based), hgg, and her
             location = 4
-            if "curriculum" in clean_path and "hgg" in clean_path:
+            if "curriculum" in clean_path and "hgg" in clean_path and "graph" in clean_path:
                 config = "GC-HGG"
             elif "curriculum" in clean_path and "normal" in clean_path:
                 config = "C-HER"
+            elif "graph" in clean_path:
+                config = "G-HGG"
             elif "hgg" in clean_path:
                 config = "HGG"
             elif "normal" in clean_path:

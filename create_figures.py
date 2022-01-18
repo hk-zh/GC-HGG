@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy as np
 from envs.distance_graph import DistanceGraph
 import glob
@@ -207,9 +208,9 @@ def figure_7(figure="a", save_dir="figures"):
     # FetchPushObstacle modified!
     adapt_dict["field"] = [1.3, 0.75, 0.6, 0.25, 0.35, 0.2]
     adapt_dict["obstacles"] = [[1.3 - 0.05, 0.75, 0.6 - 0.1, 0.20, 0.04, 0.1]]
-    num_vertices = [20, 41, 10]  # [20, 20, 10]
-    goal_1 = [1.3, 0.6, 0.4]
-    goal_2 = [1.3, 0.9, 0.4]
+    num_vertices = [31, 31, 11]  # [20, 20, 10]
+    goal_1 = [1.3, 0.5, 0.4]
+    goal_2 = [1.3, 1, 0.4]
 
     graph = DistanceGraph(None, field=adapt_dict["field"], num_vertices=num_vertices, obstacles=adapt_dict["obstacles"])
     graph.compute_cs_graph()
@@ -228,6 +229,14 @@ def figure_7(figure="a", save_dir="figures"):
 
 def figure_8(figure1="a", figure2="b", save_dir="figures", N=100, M=10):
     print("Creating figure 8{} ...".format(figure1))
+    if not os.path.exists(save_dir):
+        try:
+            os.makedirs(save_dir)
+        except OSError:
+            print("Creation of the directory %s failed" % save_dir)
+        else:
+            print("Successfully created the directory %s " % save_dir)
+
     save_path = save_dir + "/Figure_8" + figure1+".pdf"
     px = np.random.rand(N)
     py = np.random.rand(N)
@@ -288,4 +297,5 @@ def all():
 
 
 if __name__ == "__main__":
-    figure_8()
+    all()
+

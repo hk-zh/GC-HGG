@@ -152,7 +152,7 @@ class DistanceGraph:
         if not (
                 self.x_min - threshold <= x <= self.x_max + threshold and self.y_min - threshold <= y <= self.y_max + threshold and self.z_min - threshold <= z <= self.z_max + threshold):
             return None
-        return np.round((coords - self.lower_band) / self.diff)
+        return np.round((np.array(coords) - np.array(self.lower_band)) / self.diff)
 
     def compute_cs_graph(self):
         # create cs_graph as a sparse matrix of size [num_nodes, num_nodes],

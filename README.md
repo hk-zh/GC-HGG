@@ -19,7 +19,7 @@ https://videoviewsite.wixsite.com/gc-hgg
 <img width="1920" alt="KukaReach" src="https://user-images.githubusercontent.com/57254021/124595467-57bb0380-de61-11eb-8597-7e83e4c140d0.png">
 <img width="1920" alt="KukaPickNoObstacle" src="https://user-images.githubusercontent.com/57254021/124595454-52f64f80-de61-11eb-9287-64482f531d41.png">
 <img width="1920" alt="KukaPickObstacle" src="https://user-images.githubusercontent.com/57254021/124595460-55f14000-de61-11eb-9c60-09e2230e555a.png">
-<img width="1920" alt="KukaPush" src="https://user-images.githubusercontent.com/57254021/124595464-57226d00-de61-11eb-9120-6a37e965c7cb.png">
+<img width="1240" alt="KukaPush" src="https://user-images.githubusercontent.com/57254021/141085082-7c14281b-668b-408a-8f9b-5e364104c36e.png">
 
 
 ## Training under different environments
@@ -41,7 +41,9 @@ python train.py --tag 450 --learn normal --env KukaReach-v1 --curriculum True --
 #HGG
 python train.py --tag 510 --learn hgg --env KukaPickAndPlaceObstacle-v1 --stop_hgg_threshold 0.3
 #GC-HGG
-python train.py --tag 520 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 15 --stop_hgg_threshold 0.9 --curriculum True
+python train.py --tag 520 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 11 --n_y 11 --n_z 7 --stop_hgg_threshold 0.9 --curriculum True
+#G-HGG
+python train.py --tag 530 --learn hgg --env KukaPickAndPlaceObstacle-v1 --graph True --n_x 11 --n_y 11 --n_z 7 --stop_hgg_threshold 0.9
 #CHER
 python train.py --tag 550 --learn normal --env KukaPickAndPlaceObstacle-v1 --curriculum True --batch_size 64 --buffer_size 500
 
@@ -50,20 +52,24 @@ python train.py --tag 550 --learn normal --env KukaPickAndPlaceObstacle-v1 --cur
 #HGG
 python train.py --tag 610 --learn hgg --env KukaPickNoObstacle-v1 --stop_hgg_threshold 0.3
 #GC-HGG
-python train.py --tag 620 --learn hgg --env KukaPickNoObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 21 --stop_hgg_threshold 0.9 --curriculum True
+python train.py --tag 620 --learn hgg --env KukaPickNoObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 15 --stop_hgg_threshold 0.5 --curriculum True
+#G-HGG
+python train.py --tag 630 --learn hgg --env KukaPickNoObstacle-v1 --graph True --n_x 31 --n_y 31 --n_z 15 --stop_hgg_threshold 0.5
 #CHER
 python train.py --tag 650 --learn normal --env KukaPickNoObstacle-v1 --curriculum True --batch_size 64 --buffer_size 500
 
 ## KukaPushNew
 
 #HER
-python train.py --tag 1000 --learn normal --env KukaPushNew-v1 --epoch 20
+python train.py --tag 1000 --learn normal --env KukaPushNew-v1 --epoch 10
 #HGG
-python train.py --tag 1010 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20
+python train.py --tag 1010 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 10
 #GC-HGG
-python train.py --tag 1020 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 20 --graph True --n_x 31 --n_y 31 --n_z 11 --curriculum True
+python train.py --tag 1020 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 10 --graph True --n_x 5 --n_y 11 --n_z 7 --curriculum True
+#G-HGG
+python train.py --tag 1030 --learn hgg --env KukaPushNew-v1 --stop_hgg_threshold 0.3 --epoch 10 --graph True --n_x 5 --n_y 11 --n_z 7
 #CHER
-python train.py --tag 1050 --learn normal --env KukaPushNew-v1 --epoch 20 --curriculum True
+python train.py --tag 1050 --learn normal --env KukaPushNew-v1 --epoch 10 --curriculum True 
 
 ```
 

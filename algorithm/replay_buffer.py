@@ -480,8 +480,10 @@ class ReplayBuffer_Episodic:
             else:
                 diversity = self.compute_diversity2(batches[i])
                 proximity = self.compute_proximity(batches[i])
-
-            lamb = self.dis_balance
+            if self.args.trade_off:
+                lamb = self.dis_balance
+            else:
+                lamb = self.iter_balance
             F = diversity - lamb * proximity
             if F > F_max:
                 F_max = F

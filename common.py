@@ -95,6 +95,7 @@ def get_args():
     parser.add_argument('--balance_sigma', help='balance parameters', type=np.float32, default=0.3)
     parser.add_argument('--balance_eta', help='balance parameters', type=np.float32, default=1000)
     parser.add_argument('--trade_off', help='the trade-off method of proximity and diversity', type=str, default='Wasser-Stein')
+    parser.add_argument('--balance_tau', help='balance parameters', type=np.float32, default=0.0002)
     parser.add_argument('--record', help='record videos', type=bool, default=False)
 
     parser.add_argument('--save_acc', help='save successful rate', type=str2bool, default=True)

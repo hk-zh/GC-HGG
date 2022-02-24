@@ -112,7 +112,7 @@ class ReplayBuffer_Episodic:
         self.steps_counter = 0
         self.dis_balance = 0
         self.iter_balance = 1
-        self.tau = 0.0002
+        self.tau = self.args.balance_tau
         self.stop_trade_off = False
         self.ignore = True
         # self.sample_methods = {

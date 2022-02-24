@@ -112,7 +112,7 @@ class ReplayBuffer_Episodic:
         self.steps_counter = 0
         self.dis_balance = 0
         self.iter_balance = 1
-        self.tau = 0.00001
+        self.tau = 0.0002
         self.stop_trade_off = False
         self.ignore = True
         # self.sample_methods = {
@@ -138,6 +138,13 @@ class ReplayBuffer_Episodic:
         if d == np.inf:
             d = 9999
         return d
+
+    def update_lambda_dis(self, dis):
+        self.dis_balance = self.args.balance_eta * pow(2.71, (-dis / self.args.episodes) / (
+                    self.args.balance_sigma * self.args.balance_sigma))
+
+    def update_lambda_iter(self):
+        self.iter_balance *= (1 + self.tau)
 
     def store_trajectory(self, trajectory):
         episode = trajectory.ep
@@ -312,7 +319,6 @@ class ReplayBuffer_Episodic:
         sel_idx_set = []
         idx_set = [i for i in range(len(goals))]
         balance = self.iter_balance
-        self.iter_balance *= (1 + self.tau)
         v_set = [i for i in range(len(goals))]
         max_set = []
         for i in range(batch_size):
@@ -480,7 +486,7 @@ class ReplayBuffer_Episodic:
             else:
                 diversity = self.compute_diversity2(batches[i])
                 proximity = self.compute_proximity(batches[i])
-            if self.args.trade_off:
+            if self.args.trade_off == 'Wasser-Stein':
                 lamb = self.dis_balance
             else:
                 lamb = self.iter_balance

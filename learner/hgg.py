@@ -315,12 +315,10 @@ class HGGLearner:
                     args.logger.add_dict(info)
                 # update target network
                 agent.target_update()
-        if left_dis_total == 0:
-            buffer.dis_balance = 1000
-            # maximum
-        else:
-            buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
-
+            if args.trade_off == 'Wasser-Stein':
+                buffer.update_lambda_dis(left_dis_total)
+            else:
+                buffer.update_lambda_iter()
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

@@ -467,7 +467,6 @@ class ReplayBuffer_Episodic:
             batches.append([])
         sel_batch = None
         F_max = float('-inf')
-        self.iter_balance = self.iter_balance * (1 + self.tau)
         for i in range(N):
             for j in range(batch_size):
                 idx = self.energy_sample()

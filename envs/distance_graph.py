@@ -124,9 +124,10 @@ class DistanceGraph:
                 return True
         return False
 
-    def gridpoint2vertex(self, gridpoint) -> int:
+    @staticmethod
+    def gridpoint2vertex(gridpoint, hash) -> int:
         # converts gridpoint representation [i, j, k] to vertex ID
-        node = np.dot(gridpoint, self.hash)
+        node = np.dot(gridpoint, hash)
         return int(node)
 
     def vertex2gridpoint(self, vertex) -> (int, int, int):
@@ -182,8 +183,8 @@ class DistanceGraph:
                     for a, b, c in self.previous:
                         if self.obstacle_vertices[i, j, k] == 0:
                             if self.obstacle_vertices[i + a, j + b, k + c] == 0:  # i.e. is white
-                                basevertex = self.gridpoint2vertex([i, j, k])
-                                connectvertex = self.gridpoint2vertex([i + a, j + b, k + c])
+                                basevertex = self.gridpoint2vertex([i, j, k], self.hash)
+                                connectvertex = self.gridpoint2vertex([i + a, j + b, k + c], self.hash)
                                 # distance d between two vertices
                                 d = np.sqrt(
                                     a * a * self.dx * self.dx + b * b * self.dy * self.dy + c * c * self.dz * self.dz)
@@ -223,6 +224,15 @@ class DistanceGraph:
             return abs(gridpoint1[0] - gridpoint2[0]) + abs(gridpoint1[1] - gridpoint2[1]) + abs(
                 gridpoint1[2] - gridpoint2[2])
 
+    def get_dist_fast(self, coords1, coords2):
+        gridpoint1 = self.coords2gridpoint(coords1)
+        gridpoint2 = self.coords2gridpoint(coords2)
+        if gridpoint1 is None or gridpoint2 is None:
+            return np.inf
+        vertex_a = self.gridpoint2vertex(gridpoint1, self.hash)
+        vertex_b = self.gridpoint2vertex(gridpoint2, self.hash)
+        return self.dist_matrix[vertex_a][vertex_b]
+
     def get_dist(self, coords1, coords2, return_path=False):
         # get the shortest distance between coord1 and coords2 (each of form [x, y, z]) on cs_graph
         # in case a predecessor matrix has been calculated, one can also return the shortest path
@@ -239,8 +249,8 @@ class DistanceGraph:
             return np.inf, None
 
         # transfer gridpoint representation to vertex ID
-        vertex_a = self.gridpoint2vertex(gridpoint1)
-        vertex_b = self.gridpoint2vertex(gridpoint2)
+        vertex_a = self.gridpoint2vertex(gridpoint1, self.hash)
+        vertex_b = self.gridpoint2vertex(gridpoint2, self.hash)
 
         if not return_path:
             return self.dist_matrix[vertex_a][vertex_b], None

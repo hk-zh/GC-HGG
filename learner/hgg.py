@@ -78,7 +78,7 @@ class MatchSampler:
 
     def get_graph_goal_distance(self, goal_a, goal_b):
         if self.args.graph:
-            d, _ = self.graph.get_dist(goal_a, goal_b)
+            d = self.graph.get_dist_fast(goal_a, goal_b)
             if d == np.inf:
                 d = 9999
             return d

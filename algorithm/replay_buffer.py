@@ -5,7 +5,7 @@ from envs.utils import quaternion_to_euler_angle
 from sklearn.neighbors import NearestNeighbors
 import random
 import multiprocessing
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
 def goal_concat(obs, goal):
     return np.concatenate([obs, goal], axis=0)
@@ -14,7 +14,31 @@ def goal_concat(obs, goal):
 def goal_based_process(obs):
     return goal_concat(obs['observation'], obs['desired_goal'])
 
+fakeSelf = None
 
+def computeF(batch_size):
+    batch = []
+    for j in range(batch_size):
+        idx = fakeSelf.energy_sample()
+        step = np.random.randint(fakeSelf.steps[idx])
+        step_her = np.random.randint(step + 1, fakeSelf.steps[idx] + 1)
+        if np.random.uniform() <= fakeSelf.args.her_ratio:
+            goal = fakeSelf.buffer['obs'][idx][step_her]['achieved_goal']
+            batch.append([idx, step, goal])
+        else:
+            goal = fakeSelf.buffer['obs'][idx][step]['desired_goal']
+            batch.append([idx, step, goal])
+
+    if fakeSelf.args.graph:
+        diversity = fakeSelf.compute_diversity2(batch)
+        proximity = fakeSelf.compute_proximity_graph(batch)
+    else:
+        diversity = fakeSelf.compute_diversity2(batch)
+        proximity = fakeSelf.compute_proximity(batch)
+
+    lamb = fakeSelf.dis_balance
+    F = diversity - lamb * proximity
+    return F, batch
 
 class Trajectory:
     def __init__(self, init_obs):
@@ -95,6 +119,7 @@ class Trajectory:
 
 class ReplayBuffer_Episodic:
     def __init__(self, args):
+        globals()['fakeSelf'] = self
         self.args = args
         if args.buffer_type == 'energy':
             self.energy = True
@@ -118,6 +143,7 @@ class ReplayBuffer_Episodic:
         self.tau = 0.00001
         self.stop_trade_off = False
         self.ignore = True
+        self.executor = ProcessPoolExecutor(max_workers=10)
         # self.sample_methods = {
         #     'ddpg': self.sample_batch_ddpg,
         #     'curriculum&': self.sample_batch_diversity_proximity_trade_off
@@ -131,7 +157,7 @@ class ReplayBuffer_Episodic:
             self.sample_batch = self.sample_batch_ddpg
 
     def get_goal_distance(self, goal_a, goal_b):
-        d, _ = self.graph.get_dist(goal_a, goal_b)
+        d = self.graph.get_dist_fast(goal_a, goal_b)
         if d == np.inf:
             d = 9999
         return d
@@ -452,30 +478,6 @@ class ReplayBuffer_Episodic:
             proximity = proximity + np.linalg.norm(ac_goal - goal)
         return proximity / len(batch)
 
-    def computeF(self, batch_size):
-        batch = []
-        for j in range(batch_size):
-            idx = self.energy_sample()
-            step = np.random.randint(self.steps[idx])
-            step_her = np.random.randint(step + 1, self.steps[idx] + 1)
-            if np.random.uniform() <= self.args.her_ratio:
-                goal = self.buffer['obs'][idx][step_her]['achieved_goal']
-                batch.append([idx, step, goal])
-            else:
-                goal = self.buffer['obs'][idx][step]['desired_goal']
-                batch.append([idx, step, goal])
-
-        if self.args.graph:
-            diversity = self.compute_diversity2(batch)
-            proximity = self.compute_proximity_graph(batch)
-        else:
-            diversity = self.compute_diversity2(batch)
-            proximity = self.compute_proximity(batch)
-
-        lamb = self.dis_balance
-        F = diversity - lamb * proximity
-        return F, batch
-
     def sample_batch_diversity_proximity_trade_off(self, batch_size=-1, normalizer=False, plain=False):
         if self.stop_trade_off:
             return self.sample_batch_ddpg()
@@ -488,42 +490,16 @@ class ReplayBuffer_Episodic:
             batches.append([])
         sel_batch = None
         F_max = float('-inf')
-        # self.iter_balance = self.iter_balance * (1 + self.tau)
-        executor = ThreadPoolExecutor(max_workers = 10)
-        thread_list = []
+
+        process_list = []
         for i in range(N):
-            t = executor.submit(self.computeF, (batch_size))
-            thread_list.append(t)
-        for r in thread_list:
-            F, ret_batch = r.result()
+            t = self.executor.submit(computeF, (batch_size))
+            process_list.append(t)
+        for p in as_completed(process_list):
+            F, ret_batch = p.result()
             if F > F_max:
                 F_max = F
                 sel_batch = ret_batch
-
-        # for i in range(N):
-        #     for j in range(batch_size):
-        #         idx = self.energy_sample()
-        #         step = np.random.randint(self.steps[idx])
-        #         step_her = np.random.randint(step + 1, self.steps[idx] + 1)
-        #         if np.random.uniform() <= self.args.her_ratio:
-        #             goal = self.buffer['obs'][idx][step_her]['achieved_goal']
-        #             batches[i].append([idx, step, goal])
-        #         else:
-        #             goal = self.buffer['obs'][idx][step]['desired_goal']
-        #             batches[i].append([idx, step, goal])
-        #
-        #     if self.args.graph:
-        #         diversity = self.compute_diversity2(batches[i])
-        #         proximity = self.compute_proximity_graph(batches[i])
-        #     else:
-        #         diversity = self.compute_diversity2(batches[i])
-        #         proximity = self.compute_proximity(batches[i])
-        #
-        #     lamb = self.dis_balance
-        #     F = diversity - lamb * proximity
-        #     if F > F_max:
-        #         F_max = F
-        #         sel_batch = batches[i]
 
         for i in range(batch_size):
             idx = sel_batch[i][0]

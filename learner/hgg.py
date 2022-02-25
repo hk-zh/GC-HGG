@@ -317,10 +317,8 @@ class HGGLearner:
                 agent.target_update()
         if args.trade_off == 'WSD':
             buffer.update_lambda_dis(left_dis_total)
-            print('lambda: ', buffer.dis_balance)
         else:
             buffer.update_lambda_iter()
-            print('lambda: ', buffer.iter_balance)
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

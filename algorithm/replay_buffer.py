@@ -142,9 +142,11 @@ class ReplayBuffer_Episodic:
     def update_lambda_dis(self, dis):
         self.dis_balance = self.args.balance_eta * pow(2.71, (-dis / self.args.episodes) / (
                     self.args.balance_sigma * self.args.balance_sigma))
+        print('lambda_dis: ', self.dis_balance)
 
     def update_lambda_iter(self):
         self.iter_balance *= (1 + self.tau)
+        print('lambda_iter: ', self.iter_balance)
 
     def store_trajectory(self, trajectory):
         episode = trajectory.ep

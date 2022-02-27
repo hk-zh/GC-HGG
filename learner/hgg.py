@@ -308,6 +308,7 @@ class HGGLearner:
         else:
             buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
         buffer.update_global()
+        buffer.update_pool()
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

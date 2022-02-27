@@ -7,6 +7,7 @@ import random
 import multiprocessing
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
+
 def goal_concat(obs, goal):
     return np.concatenate([obs, goal], axis=0)
 
@@ -148,7 +149,6 @@ class ReplayBuffer_Episodic:
         self.stop_trade_off = False
         self.ignore = True
         self.executor = ProcessPoolExecutor(max_workers=8)
-
         if args.curriculum:
             if args.learn == "normal":
                 self.sample_batch = self.lazier_and_goals_sample_kg
@@ -159,6 +159,9 @@ class ReplayBuffer_Episodic:
 
     def update_global(self):
         globals()['buffer_proxy'] = self
+
+    def update_pool(self):
+        self.executor.shutdown()
         self.executor = ProcessPoolExecutor(max_workers=8)
 
     def get_goal_distance(self, goal_a, goal_b):

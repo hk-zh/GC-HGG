@@ -77,18 +77,18 @@ if __name__=='__main__':
 			args.logger.summary_show(buffer.counter)
 
 			# Save latest policy
-			policy_file = args.logger.my_log_dir + "saved_policy-latest"
+			policy_file = os.path.join(args.logger.my_log_dir, "saved_policy-latest")
 			agent.saver.save(agent.sess, policy_file)
 
 			# Save policy if new best_success was reached
 			if args.logger.values["Success"] > best_success:
 				best_success = args.logger.values["Success"]
-				policy_file = args.logger.my_log_dir + "saved_policy-best"
+				policy_file = os.path.join(args.logger.my_log_dir, "saved_policy-best")
 				agent.saver.save(agent.sess, policy_file)
 				args.logger.info("Saved as best policy to {}!".format(args.logger.my_log_dir))
 
 		# Save periodic policy every epoch
-		policy_file = args.logger.my_log_dir + "saved_policy"
+		policy_file = os.path.join(args.logger.my_log_dir, "saved_policy")
 		agent.saver.save(agent.sess, policy_file, global_step=epoch)
 		args.logger.info("Saved periodic policy to {}!".format(args.logger.my_log_dir))
 

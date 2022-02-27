@@ -4,8 +4,6 @@ from envs import make_env
 from envs.utils import goal_distance
 from algorithm.replay_buffer import Trajectory, goal_concat
 from utils.gcc_utils import gcc_load_lib, c_double, c_int
-from envs.distance_graph import DistanceGraph
-
 
 # TODO: replaced goal_distance with get_graph_goal_distance
 
@@ -64,17 +62,6 @@ class MatchSampler:
             obs = self.env.reset()
             dis = self.get_graph_goal_distance(obs['achieved_goal'], obs['desired_goal'])
             if dis > self.max_dis: self.max_dis = dis
-
-    # Pre-computation of graph-based distances
-    # def create_graph_distance(self):
-    #     obstacles = list()
-    #     field = self.env.env.env.adapt_dict["field"]
-    #     obstacles = self.env.env.env.adapt_dict["obstacles"]
-    #     num_vertices = self.args.num_vertices
-    #     graph = DistanceGraph(args=self.args, field=field, num_vertices=num_vertices, obstacles=obstacles)
-    #     graph.compute_cs_graph()
-    #     graph.compute_dist_matrix()
-    #     self.graph = graph
 
     def get_graph_goal_distance(self, goal_a, goal_b):
         if self.args.graph:
@@ -320,7 +307,7 @@ class HGGLearner:
             # maximum
         else:
             buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
-
+        buffer.update_global()
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

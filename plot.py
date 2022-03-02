@@ -173,7 +173,35 @@ if __name__ == "__main__":
                 config = r"GC-HGG ($\sigma = 0.37$)"
             elif ("curriculum" in clean_path) and ("sigma0.4" in clean_path):
                 config = r"GC-HGG ($\sigma = 0.4$)"
-
+        elif args.naming == 9:
+            location = 2
+            # ablation study for different trade-offs
+            if "curriculum" in clean_path:
+                if "tau-a" in clean_path:
+                    config = r"with CHER trade-off $(\tau = 0.005)$"
+                elif "tau-b" in clean_path:
+                    config = r"with CHER trade-off $(\tau = 0.01)$"
+                elif "tau-c" in clean_path:
+                    config = r"with CHER trade-off $(\tau = 0.05)$"
+                else:
+                    config = r"GC-HGG"
+        elif args.naming == 10:
+            location = 4
+            # ablation study for grid-size
+            if "curriculum" in clean_path and "graph" in clean_path:
+                if "11*11*7" in clean_path:
+                    config = r"GC-HGG ($n = 11 \cdot 11 \cdot 7$)"
+                if "31*31*11" in clean_path:
+                    config = r"GC-HGG ($n = 31 \cdot 31 \cdot 11$)"
+                if "5*11*7" in clean_path:
+                    config = r"GC-HGG ($n = 5 \cdot 11 \cdot 7$)"
+            elif "graph" in clean_path:
+                if "11*11*7" in clean_path:
+                    config = r"G-HGG ($n = 11 \cdot 11 \cdot 7$)"
+                if "31*31*11" in clean_path:
+                    config = r"G-HGG ($n = 31 \cdot 31 \cdot 11$)"
+                if "5*11*7" in clean_path:
+                    config = r"G-HGG ($n = 5 \cdot 11 \cdot 7$)"
 
         # Test:
         run = config
@@ -240,6 +268,8 @@ if __name__ == "__main__":
     plt.tick_params(labelsize=16)
     if (args.env_id == "FetchReach") or (args.env_id == "KukaReach"):
         my_x_ticks = np.arange(0, 120, 20)
+    elif args.env_id == "KukaPushNew":
+        my_x_ticks = np.arange(0, 225, 25)
     else:
         my_x_ticks = np.arange(0, 450, 50)
     my_y_ticks = np.arange(0, 1.2, 0.2)

@@ -320,7 +320,7 @@ class HGGLearner:
             # maximum
         else:
             buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
-
+            print("lambda: ", buffer.dis_balance)
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

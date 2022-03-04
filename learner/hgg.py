@@ -294,7 +294,7 @@ class HGGLearner:
             # Trajectory is stored in replay buffer, replay buffer can be normal or EBP
             buffer.store_trajectory(current)
             agent.normalizer_update(buffer.sample_batch())
-
+            buffer.update_pool()
             if buffer.steps_counter >= args.warmup:
                 for _ in range(args.train_batches):
                     # train with Hindsight Goals (HER step)
@@ -302,13 +302,10 @@ class HGGLearner:
                     args.logger.add_dict(info)
                 # update target network
                 agent.target_update()
-        if left_dis_total == 0:
-            buffer.dis_balance = 1000
-            # maximum
-        else:
-            buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
-        buffer.update_global()
-        buffer.update_pool()
+        buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
+
+
+        print("lambda: ", buffer.dis_balance)
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

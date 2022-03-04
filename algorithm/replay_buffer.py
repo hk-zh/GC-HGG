@@ -492,7 +492,7 @@ class ReplayBuffer_Episodic:
 
         batch_size = self.args.batch_size
         batch = dict(obs=[], obs_next=[], acts=[], rews=[], done=[])
-        N = 8
+        N = 10
         sel_batch = None
         F_max = float('-inf')
 

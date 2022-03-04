@@ -41,7 +41,6 @@ class PushLabyrinthEnvV2(push_env.PushEnv, gym_utils.EzPickle):
 
         # Randomize start position of object.
         if self.has_object:
-            object_xpos = self.init_center[:2]
             object_xpos = self.init_center[:2] + self.np_random.uniform(-self.obj_range, self.obj_range,
                                                                                  size=2)
             object_qpos = self.sim.data.get_joint_qpos('object0:joint')

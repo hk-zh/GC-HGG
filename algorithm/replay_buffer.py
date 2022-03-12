@@ -431,9 +431,8 @@ class ReplayBuffer_Episodic:
             goal = batch[i][2]
             ac_goal = self.buffer['obs'][idx][step]['achieved_goal']
             dis = self.get_goal_distance(ac_goal, goal)
-            if dis != 9999:
-                proximity = proximity + dis
-                cnt += 1
+            proximity = proximity + dis
+            cnt += 1
         if cnt == 0:
             return 0
         else:
@@ -456,7 +455,7 @@ class ReplayBuffer_Episodic:
         batch_size = self.args.batch_size
         batch = dict(obs=[], obs_next=[], acts=[], rews=[], done=[])
         batches = []
-        N = 10
+        N = 7
         for i in range(N):
             batches.append([])
         sel_batch = None

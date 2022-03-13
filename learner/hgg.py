@@ -317,7 +317,6 @@ class HGGLearner:
                 agent.target_update()
         if left_dis_total == 0:
             buffer.dis_balance = 1000
-            # maximum
         else:
             buffer.dis_balance = args.balance_eta * pow(2.71, (-left_dis_total / args.episodes) / (args.balance_sigma * args.balance_sigma))
             print("lambda: ", buffer.dis_balance)

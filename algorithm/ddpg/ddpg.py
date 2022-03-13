@@ -1,10 +1,9 @@
 import numpy as np
-import tensorflow as tf
-from envs import goal_distance_obs
+import tensorflow.compat.v1 as tf
 from utils.tf_utils import get_vars, Normalizer
 from algorithm.replay_buffer import goal_based_process
 
-
+tf.disable_v2_behavior()
 class DDPG:
     def __init__(self, args):
         self.args = args
@@ -44,7 +43,7 @@ class DDPG:
 
         def create_network():
             def mlp_policy(obs_ph):
-                with tf.variable_scope('net', initializer=tf.contrib.layers.xavier_initializer()):
+                with tf.variable_scope('net', initializer=tf.keras.initializers.glorot_normal(seed=1)):
                     pi_dense1 = tf.layers.dense(obs_ph, 256, activation=tf.nn.relu, name='pi_dense1')
                     pi_dense2 = tf.layers.dense(pi_dense1, 256, activation=tf.nn.relu, name='pi_dense2')
                     pi_dense3 = tf.layers.dense(pi_dense2, 256, activation=tf.nn.relu, name='pi_dense3')
@@ -53,7 +52,7 @@ class DDPG:
 
             def mlp_value(obs_ph, acts_ph):
                 state_ph = tf.concat([obs_ph, acts_ph], axis=1)
-                with tf.variable_scope('net', initializer=tf.contrib.layers.xavier_initializer()):
+                with tf.variable_scope('net', initializer=tf.keras.initializers.glorot_normal(seed=1)):
                     q_dense1 = tf.layers.dense(state_ph, 256, activation=tf.nn.relu, name='q_dense1')
                     q_dense2 = tf.layers.dense(q_dense1, 256, activation=tf.nn.relu, name='q_dense2')
                     q_dense3 = tf.layers.dense(q_dense2, 256, activation=tf.nn.relu, name='q_dense3')

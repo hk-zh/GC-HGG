@@ -5,7 +5,7 @@ import logging
 import time
 import getpass
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from termcolor import colored
 from beautifultable import BeautifulTable
 import pickle

@@ -25,10 +25,10 @@ class Player:
         self.play_dir = args.play_path
         self.play_epoch = args.play_epoch
         self.meta_path = os.path.join(self.play_dir, "saved_policy-{}.meta".format(self.play_epoch))
-        self.sess = tf.Session()
-        self.saver = tf.train.import_meta_graph(self.meta_path)
+        self.sess = tf.compat.v1.Session()
+        self.saver = tf.compat.v1.train.import_meta_graph(self.meta_path)
         self.saver.restore(self.sess, tf.train.latest_checkpoint(self.play_dir))
-        graph = tf.get_default_graph()
+        graph = tf.compat.v1.get_default_graph()
         self.raw_obs_ph = graph.get_tensor_by_name("raw_obs_ph:0")
         self.pi = graph.get_tensor_by_name("main/policy/net/pi/Tanh:0")
 

@@ -112,6 +112,8 @@ class ReplayBuffer_Episodic:
         self.steps_counter = 0
         self.dis_balance = 0
         self.iter_balance = 1
+        self.eta = self.args.balance_eta
+        self.sigma = self.args.balance_sigma
         self.tau = 0.00001
         self.stop_trade_off = False
         self.ignore = True
@@ -138,6 +140,9 @@ class ReplayBuffer_Episodic:
         if d == np.inf:
             d = 9999
         return d
+
+    def update_dis_balance(self, avg_dis):
+        self.dis_balance = self.eta * np.exp((-avg_dis) / (self.sigma * self.sigma))
 
     def store_trajectory(self, trajectory):
         episode = trajectory.ep
@@ -355,7 +360,6 @@ class ReplayBuffer_Episodic:
     def compute_diversity_graph(self, batch):
         goals = []
         diversity = 0.0
-        C = 0.1
         for i in range(len(batch)):
             idx = batch[i][0]
             step = batch[i][1]
@@ -372,33 +376,30 @@ class ReplayBuffer_Episodic:
         n = len(row)
         cnt = 0
         for i in range(n):
-            dis = self.get_goal_distance_grid(goals[row[i]], goals[col[i]])
+            dis = self.get_goal_distance(goals[row[i]], goals[col[i]])
             if dis != 9999:
-                diversity += kgraph.data[i] + dis * C
+                diversity += (kgraph.data[i] + dis) / 2
                 cnt += 1
         return diversity / cnt
 
     def compute_diversity2(self, batch):
         goals = []
         diversity = 0.0
-        cnt = 0
         for i in range(len(batch)):
             idx = batch[i][0]
             step = batch[i][1]
             ac_goal = self.buffer['obs'][idx][step]['achieved_goal']
             goals.append(ac_goal)
-            cnt += 1
 
         num_neighbor = 1
         kgraph = NearestNeighbors(
             n_neighbors=num_neighbor, algorithm='kd_tree',
             metric='euclidean').fit(goals).kneighbors_graph(
             mode='distance').tocoo(copy=False)
-        row = kgraph.row
-        col = kgraph.col
+
         for i in range(len(kgraph.data)):
             diversity += kgraph.data[i]
-        return diversity / cnt
+        return diversity / len(batch)
 
     def compute_diversity(self, batch):
         center = np.array([0, 0, 0])
@@ -456,12 +457,12 @@ class ReplayBuffer_Episodic:
         batch_size = self.args.batch_size
         batch = dict(obs=[], obs_next=[], acts=[], rews=[], done=[])
         batches = []
-        N = 8
+        N = self.args.K
         for i in range(N):
             batches.append([])
         sel_batch = None
         F_max = float('-inf')
-        self.iter_balance = self.iter_balance * (1 + self.tau)
+
         for i in range(N):
             for j in range(batch_size):
                 idx = self.energy_sample()
@@ -475,7 +476,7 @@ class ReplayBuffer_Episodic:
                     batches[i].append([idx, step, goal])
 
             if self.args.graph:
-                diversity = self.compute_diversity2(batches[i])
+                diversity = self.compute_diversity_graph(batches[i])
                 proximity = self.compute_proximity_graph(batches[i])
             else:
                 diversity = self.compute_diversity2(batches[i])

@@ -54,8 +54,9 @@ class DistanceGraph:
 
         # lower_band and diff
 
-        self.lower_band = [self.x_min, self.y_min, self.z_min]
-        self.diff = [self.dx, self.dy, self.dz]
+        self.lower_band = np.array([self.x_min, self.y_min, self.z_min])
+        self.diff = np.array([self.dx, self.dy, self.dz])
+        self.threshold = 1e-4
         self.hash = [1, self.n_x, self.n_x * self.n_y]
 
         # total number of vertices
@@ -147,12 +148,13 @@ class DistanceGraph:
 
     def coords2gridpoint(self, coords) -> (int, int, int):
         # converts coords representation [x, y, z] to gridpoint representation [i, j, k]
-        threshold = 0.00001
         [x, y, z] = coords
         if not (
-                self.x_min - threshold <= x <= self.x_max + threshold and self.y_min - threshold <= y <= self.y_max + threshold and self.z_min - threshold <= z <= self.z_max + threshold):
+                self.x_min - self.threshold <= x < self.x_max
+                and self.y_min - self.threshold <= y < self.y_max
+                and self.z_min - self.threshold <= z < self.z_max):
             return None
-        return np.round((np.array(coords) - np.array(self.lower_band)) / self.diff)
+        return np.rint((np.array(coords) - self.lower_band) / self.diff)
 
     def compute_cs_graph(self):
         # create cs_graph as a sparse matrix of size [num_nodes, num_nodes],

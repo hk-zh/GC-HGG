@@ -5,6 +5,7 @@ from envs.utils import quaternion_to_euler_angle
 from sklearn.neighbors import NearestNeighbors
 import random
 
+
 def goal_concat(obs, goal):
     return np.concatenate([obs, goal], axis=0)
 
@@ -48,9 +49,9 @@ class Trajectory:
             velocity = diff / delta_t
             kinetic_energy = 0.5 * m * np.power(velocity, 2)
             kinetic_energy = np.sum(kinetic_energy, axis=2)
-            energy_totoal = w_potential * potential_energy + w_linear * kinetic_energy
-            energy_diff = np.diff(energy_totoal, axis=1)
-            energy_transition = energy_totoal.copy()
+            energy_total = w_potential * potential_energy + w_linear * kinetic_energy
+            energy_diff = np.diff(energy_total, axis=1)
+            energy_transition = energy_total.copy()
             energy_transition[:, 1::] = energy_diff.copy()
             energy_transition = np.clip(energy_transition, 0, clip_energy)
             energy_transition_total = np.sum(energy_transition, axis=1)
@@ -80,9 +81,9 @@ class Trajectory:
             velocity = diff / delta_t
             kinetic_energy = 0.5 * m * np.power(velocity, 2)
             kinetic_energy = np.sum(kinetic_energy, axis=2)
-            energy_totoal = w_potential * potential_energy + w_linear * kinetic_energy + w_rotational * rotational_energy
-            energy_diff = np.diff(energy_totoal, axis=1)
-            energy_transition = energy_totoal.copy()
+            energy_total = w_potential * potential_energy + w_linear * kinetic_energy + w_rotational * rotational_energy
+            energy_diff = np.diff(energy_total, axis=1)
+            energy_transition = energy_total.copy()
             energy_transition[:, 1::] = energy_diff.copy()
             energy_transition = np.clip(energy_transition, 0, clip_energy)
             energy_transition_total = np.sum(energy_transition, axis=1)
@@ -114,13 +115,10 @@ class ReplayBuffer_Episodic:
         self.iter_balance = 1
         self.eta = self.args.balance_eta
         self.sigma = self.args.balance_sigma
-        self.tau = 0.00001
+        self.tau = self.args.balance_tau
         self.stop_trade_off = False
         self.ignore = True
-        # self.sample_methods = {
-        #     'ddpg': self.sample_batch_ddpg,
-        #     'curriculum&': self.sample_batch_diversity_proximity_trade_off
-        # }
+
         if args.curriculum:
             if args.learn == "normal":
                 self.sample_batch = self.lazier_and_goals_sample_kg
@@ -143,6 +141,9 @@ class ReplayBuffer_Episodic:
 
     def update_dis_balance(self, avg_dis):
         self.dis_balance = self.eta * np.exp((-avg_dis) / (self.sigma * self.sigma))
+
+    def update_iter_balance(self):
+        self.iter_balance *= (1 + self.tau)
 
     def store_trajectory(self, trajectory):
         episode = trajectory.ep
@@ -187,7 +188,8 @@ class ReplayBuffer_Episodic:
             return self.energy_search(t, 0, self.length - 1)
 
     def energy_search(self, t, l, r):
-        if l == r: return l
+        if l == r:
+            return l
         mid = (l + r) // 2
         if self.buffer_energy_sum[mid] >= t:
             return self.energy_search(t, l, mid)
@@ -196,7 +198,8 @@ class ReplayBuffer_Episodic:
 
     def sample_batch_ddpg(self, batch_size=-1, normalizer=False, plain=False):
         assert int(normalizer) + int(plain) <= 1
-        if batch_size == -1: batch_size = self.args.batch_size
+        if batch_size == -1:
+            batch_size = self.args.batch_size
         batch = dict(obs=[], obs_next=[], acts=[], rews=[], done=[])
 
         for i in range(batch_size):
@@ -253,7 +256,8 @@ class ReplayBuffer_Episodic:
 
         return batch
 
-    def fa(self, k, a_set, v_set, sim, row, col):
+    @staticmethod
+    def fa(k, a_set, v_set, sim, row, col):
         if len(a_set) == 0:
             init_a_set = []
             marginal_v = 0
@@ -280,12 +284,11 @@ class ReplayBuffer_Episodic:
                 new_a_set.append(a_set[i])
         return marginal_v, new_a_set
 
-    def lazier_and_goals_sample_kg(self, batch_size=-1, normalizer=False, plain=False):
+    def lazier_and_goals_sample_kg(self):
         if self.length <= 2 * self.args.batch_size or self.stop_trade_off:
             return self.sample_batch_ddpg()
         batch_size = self.args.batch_size
         batch = dict(obs=[], obs_next=[], acts=[], rews=[], done=[])
-        batches = []
         goals = []
         ac_goals = []
         experience_buffer = []
@@ -306,18 +309,16 @@ class ReplayBuffer_Episodic:
         kgraph = NearestNeighbors(
             n_neighbors=num_neighbor, algorithm='kd_tree',
             metric='euclidean').fit(goals).kneighbors_graph(
-                mode='distance').tocoo(copy=False)
+            mode='distance').tocoo(copy=False)
         row = kgraph.row
         col = kgraph.col
         sim = np.exp(
             -np.divide(np.power(kgraph.data, 2),
-                       np.mean(kgraph.data)**2))
-        delta = np.mean(kgraph.data)
+                       np.mean(kgraph.data) ** 2))
 
         sel_idx_set = []
         idx_set = [i for i in range(len(goals))]
         balance = self.iter_balance
-        self.iter_balance *= (1 + self.tau)
         v_set = [i for i in range(len(goals))]
         max_set = []
         for i in range(batch_size):
@@ -328,7 +329,7 @@ class ReplayBuffer_Episodic:
             for j in range(sub_size):
                 k_idx = sub_set[j]
                 marginal_v, new_a_set = self.fa(k_idx, max_set, v_set, sim, row,
-                                           col)
+                                                col)
                 euc = np.linalg.norm(goals[sub_set[j]] - ac_goals[sub_set[j]])
                 marginal_v = marginal_v - balance * euc
                 if marginal_v > max_marginal:
@@ -378,7 +379,7 @@ class ReplayBuffer_Episodic:
         for i in range(n):
             dis = self.get_goal_distance(goals[row[i]], goals[col[i]])
             if dis != 9999:
-                diversity += (kgraph.data[i] + dis) / 2
+                diversity += (dis + kgraph.data[i]) / 2
                 cnt += 1
         return diversity / cnt
 
@@ -400,28 +401,6 @@ class ReplayBuffer_Episodic:
         for i in range(len(kgraph.data)):
             diversity += kgraph.data[i]
         return diversity / len(batch)
-
-    def compute_diversity(self, batch):
-        center = np.array([0, 0, 0])
-        cnt = 0
-        for i in range(len(batch)):
-            idx = batch[i][0]
-            step = batch[i][1]
-            goal = batch[i][2]
-            ac_goal = self.buffer['obs'][idx][step]['achieved_goal']
-            center = center + ac_goal
-            cnt += 1
-        if cnt == 0:
-            return 0.0
-        center = center / cnt
-        diversity = 0.0
-        for i in range(len(batch)):
-            idx = batch[i][0]
-            step = batch[i][1]
-            ac_goal = self.buffer['obs'][idx][step]['achieved_goal']
-            #            if self.ignore or self.in_workspace(ac_goal):
-            diversity = diversity + np.linalg.norm(center - ac_goal)
-        return diversity / cnt
 
     def compute_proximity_graph(self, batch):
         proximity = 0.0
@@ -450,7 +429,7 @@ class ReplayBuffer_Episodic:
             proximity = proximity + np.linalg.norm(ac_goal - goal)
         return proximity / len(batch)
 
-    def sample_batch_diversity_proximity_trade_off(self, batch_size=-1, normalizer=False, plain=False):
+    def sample_batch_diversity_proximity_trade_off(self):
         if self.stop_trade_off:
             return self.sample_batch_ddpg()
 

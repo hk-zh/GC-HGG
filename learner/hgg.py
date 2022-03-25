@@ -3,8 +3,7 @@ import numpy as np
 from envs import make_env
 from envs.utils import goal_distance
 from algorithm.replay_buffer import Trajectory, goal_concat
-from utils.gcc_utils import gcc_load_lib, c_double, c_int
-from envs.distance_graph import DistanceGraph
+from utils.gcc_utils import gcc_load_lib, c_double
 
 
 # TODO: replaced goal_distance with get_graph_goal_distance
@@ -63,7 +62,8 @@ class MatchSampler:
         for i in range(1000):
             obs = self.env.reset()
             dis = self.get_graph_goal_distance(obs['achieved_goal'], obs['desired_goal'])
-            if dis > self.max_dis: self.max_dis = dis
+            if dis > self.max_dis:
+                self.max_dis = dis
 
     # Pre-computation of graph-based distances
     # def create_graph_distance(self):
@@ -85,13 +85,15 @@ class MatchSampler:
         else:
             return np.linalg.norm(goal_a - goal_b, ord=2)
 
-    def get_foot_point(self, p, ls, le):
+    @staticmethod
+    def get_foot_point(p, ls, le):
         d = ls - le
         u = (p[0] - ls[0]) * (ls[0] - le[0]) + (p[1] - ls[1]) * (ls[1] - le[1]) + (p[2] - ls[2]) * (ls[2] - le[2])
         u = u / (np.sum(np.square(d)))
         return ls + u * d
 
-    def euler_dis(self, a, b):
+    @staticmethod
+    def euler_dis(a, b):
         return np.sqrt(np.sum(np.square(a - b)))
 
     def get_route_goal_distance(self, goal_a, goal_b):
@@ -124,7 +126,8 @@ class MatchSampler:
     def add_noise(self, pre_goal, noise_std=None):
         goal = pre_goal.copy()
         dim = 2 if self.args.env[:5] == 'fetch' else self.dim
-        if noise_std is None: noise_std = self.delta
+        if noise_std is None:
+            noise_std = self.delta
         goal[:dim] += np.random.normal(0, noise_std, size=dim)
         return goal.copy()
 
@@ -133,13 +136,6 @@ class MatchSampler:
             return self.add_noise(self.pool[idx])
         else:
             return self.pool[idx].copy()
-
-    def find(self, goal):
-        res = np.sqrt(np.sum(np.square(self.pool - goal), axis=1))
-        idx = np.argmin(res)
-        if test_pool:
-            self.args.logger.add_record('Distance/sampler', res[idx])
-        return self.pool[idx].copy()
 
     def update(self, initial_goals, desired_goals):
         if self.achieved_trajectory_pool.counter == 0:
@@ -242,7 +238,7 @@ class HGGLearner:
         desired_goals = []
         goal_list = []
 
-        # get initial position and goal from environment for each epsiode
+        # get initial position and goal from environment for each episode
         for i in range(args.episodes):
             obs = self.env_List[i].reset()
             goal_a = obs['achieved_goal'].copy()
@@ -299,9 +295,11 @@ class HGGLearner:
                 # feed action to environment, get observation and reward
                 obs, reward, done, info = self.env_List[i].step(action)
                 trajectory.append(obs['achieved_goal'].copy())
-                if timestep == args.timesteps - 1: done = True
+                if timestep == args.timesteps - 1:
+                    done = True
                 current.store_step(action, obs, reward, done)
-                if done: break
+                if done:
+                    break
             achieved_trajectories.append(np.array(trajectory))
             achieved_init_states.append(init_state)
             # Trajectory is stored in replay buffer, replay buffer can be normal or EBP
@@ -316,9 +314,13 @@ class HGGLearner:
                 # update target network
                 agent.target_update()
 
-        buffer.update_dis_balance(left_dis_total / args.episodes)
-        # buffer.distance = args.balance_eta * pow(2.71, -left_dis_total/args.episodes / (args.balance_sigma * args.balance_sigma))
-        print("lambda: ", buffer.dis_balance)
+        if args.learn == 'normal':
+            buffer.update_iter_balance()
+            print("lambda: ", buffer.iter_balance)
+        elif args.learn == 'hgg':
+            buffer.update_dis_balance(left_dis_total / args.episodes)
+            print("lambda: ", buffer.dis_balance)
+
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

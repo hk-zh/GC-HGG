@@ -1,5 +1,4 @@
 import numpy as np
-import copy
 from envs import make_env, clip_return_range, Robotics_envs_id, Kuka_envs_id
 from utils.os_utils import get_arg_parser, get_logger, str2bool
 from algorithm import create_agent
@@ -10,7 +9,6 @@ from envs.distance_graph import DistanceGraph
 
 
 def create_graph_distance(env, args):
-    obstacles = list()
     field = env.env.env.adapt_dict["field"]
     obstacles = env.env.env.adapt_dict["obstacles"]
     num_vertices = args.num_vertices
@@ -94,6 +92,7 @@ def get_args():
     parser.add_argument('--hgg_pool_size', help='size of achieved trajectories pool', type=np.int32, default=1000)
     parser.add_argument('--balance_sigma', help='balance parameters', type=np.float32, default=0.3)
     parser.add_argument('--balance_eta', help='balance parameters', type=np.float32, default=1000)
+    parser.add_argument('--balance_tau', help='balance parameters', type=np.float32, default=0.005)
     parser.add_argument('--K', help='the number of sampling', type=np.int32, default=8)
     parser.add_argument('--record', help='record videos', type=bool, default=False)
 
@@ -105,7 +104,8 @@ def get_args():
     args.clip_return_l, args.clip_return_r = clip_return_range(args)
 
     logger_name = args.alg + '-' + args.env + '-' + args.learn
-    if args.tag != '': logger_name = args.tag + '-' + logger_name
+    if args.tag != '':
+        logger_name = args.tag + '-' + logger_name
     if args.graph:
         logger_name = logger_name + '-graph'
     if args.stop_hgg_threshold < 1:

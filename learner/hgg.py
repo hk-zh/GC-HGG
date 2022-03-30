@@ -320,7 +320,7 @@ class HGGLearner:
         elif args.learn == 'hgg':
             buffer.update_dis_balance(left_dis_total / args.episodes)
             print("lambda: ", buffer.dis_balance)
-
+        buffer.update_pool()
         selection_trajectory_idx = {}
         for i in range(self.args.episodes):
             # only add trajectories with movement to the trajectory pool --> use default (L2) distance measure!

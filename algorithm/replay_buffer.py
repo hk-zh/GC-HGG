@@ -4,7 +4,7 @@ from envs.utils import quaternion_to_euler_angle
 # from envs import make_env
 from sklearn.neighbors import NearestNeighbors
 import random
-
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
 def goal_concat(obs, goal):
     return np.concatenate([obs, goal], axis=0)
@@ -12,6 +12,35 @@ def goal_concat(obs, goal):
 
 def goal_based_process(obs):
     return goal_concat(obs['observation'], obs['desired_goal'])
+
+
+buffer_proxy = None
+
+
+def computeF(batch_size):
+    batch = []
+    rng = np.random.default_rng()
+    for j in range(batch_size):
+        idx = buffer_proxy.energy_sample(rng)
+        step = np.random.randint(buffer_proxy.steps[idx])
+        step_her = rng.integers(step + 1, buffer_proxy.steps[idx] + 1)
+        if rng.uniform() <= buffer_proxy.args.her_ratio:
+            goal = buffer_proxy.buffer['obs'][idx][step_her]['achieved_goal']
+            batch.append([idx, step, goal])
+        else:
+            goal = buffer_proxy.buffer['obs'][idx][step]['desired_goal']
+            batch.append([idx, step, goal])
+
+    if buffer_proxy.args.graph:
+        diversity = buffer_proxy.compute_diversity_graph(batch)
+        proximity = buffer_proxy.compute_proximity_graph(batch)
+    else:
+        diversity = buffer_proxy.compute_diversity2(batch)
+        proximity = buffer_proxy.compute_proximity(batch)
+
+    lamb = buffer_proxy.dis_balance
+    F = diversity - lamb * proximity
+    return F, batch
 
 
 class Trajectory:
@@ -94,6 +123,7 @@ class Trajectory:
 class ReplayBuffer_Episodic:
     def __init__(self, args):
         self.args = args
+        self.update_global()
         if args.buffer_type == 'energy':
             self.energy = True
             self.energy_sum = 0.0
@@ -118,6 +148,7 @@ class ReplayBuffer_Episodic:
         self.tau = self.args.balance_tau
         self.stop_trade_off = False
         self.ignore = True
+        self.executor = ProcessPoolExecutor(max_workers=8)
 
         if args.curriculum:
             if args.learn == "normal":
@@ -138,6 +169,13 @@ class ReplayBuffer_Episodic:
         if d == np.inf:
             d = 9999
         return d
+
+    def update_global(self):
+        globals()['buffer_proxy'] = self
+
+    def update_pool(self):
+        self.executor.shutdown()
+        self.executor = ProcessPoolExecutor(max_workers=8)
 
     def update_dis_balance(self, avg_dis):
         self.dis_balance = self.eta * np.exp((-avg_dis) / (self.sigma * self.sigma))
@@ -177,8 +215,11 @@ class ReplayBuffer_Episodic:
         self.counter += 1
         self.steps_counter += trajectory.length
 
-    def energy_sample(self):
-        t = self.energy_offset + np.random.uniform(0, 1) * (self.energy_sum - self.energy_offset)
+    def energy_sample(self, rng = None):
+        if not rng:
+            rng = np.random.default_rng()
+
+        t = self.energy_offset + rng.uniform(0, 1) * (self.energy_sum - self.energy_offset)
         if self.counter > self.args.buffer_size:
             if self.buffer_energy_sum[-1] >= t:
                 return self.energy_search(t, self.counter % self.length, self.length - 1)
@@ -442,30 +483,16 @@ class ReplayBuffer_Episodic:
         sel_batch = None
         F_max = float('-inf')
 
+        process_list = []
         for i in range(N):
-            for j in range(batch_size):
-                idx = self.energy_sample()
-                step = np.random.randint(self.steps[idx])
-                step_her = np.random.randint(step + 1, self.steps[idx] + 1)
-                if np.random.uniform() <= self.args.her_ratio:
-                    goal = self.buffer['obs'][idx][step_her]['achieved_goal']
-                    batches[i].append([idx, step, goal])
-                else:
-                    goal = self.buffer['obs'][idx][step]['desired_goal']
-                    batches[i].append([idx, step, goal])
+            t = self.executor.submit(computeF, batch_size)
+            process_list.append(t)
 
-            if self.args.graph:
-                diversity = self.compute_diversity_graph(batches[i])
-                proximity = self.compute_proximity_graph(batches[i])
-            else:
-                diversity = self.compute_diversity2(batches[i])
-                proximity = self.compute_proximity(batches[i])
-
-            lamb = self.dis_balance
-            F = diversity - lamb * proximity
+        for p in as_completed(process_list):
+            F, ret_batch = p.result()
             if F > F_max:
                 F_max = F
-                sel_batch = batches[i]
+                sel_batch = ret_batch
 
         for i in range(batch_size):
             idx = sel_batch[i][0]

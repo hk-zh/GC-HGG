@@ -74,7 +74,9 @@ def get_args():
                         default=(50 if args.env[:5] == 'fetch' else 100))
     parser.add_argument('--train_batches', help='number of batches to train per episode', type=np.int32, default=20)
     parser.add_argument('--curriculum', type=str2bool, default=False)
-    parser.add_argument('--buffer_size', help='number of episodes in replay buffer', type=np.int32, default=10000)
+
+    parser.add_argument('--buffer_size', help='number of episodes in replay buffer', type=np.int32,
+                        default=10000 if args.env.startswith('KukaPickAndPlaceObstacle') else 5000)
     parser.add_argument('--buffer_type', help='type of replay buffer / whether to use Energy-Based Prioritization',
                         type=str, default='energy', choices=['normal', 'energy'])
     parser.add_argument('--rhg', help='record hindsight goals in different learning stage or not', type=str2bool,

@@ -14,6 +14,8 @@ pip install -r requirements.txt
   
 7. Videos about Kuka Environments can be found here:
 https://videoviewsite.wixsite.com/gc-hgg
+   
+8. parallel implementation of GC-HGG can be found in branch concurrency.
 
 ## New Kuka Environments
 <img width="1920" alt="KukaReach" src="https://user-images.githubusercontent.com/57254021/124595467-57bb0380-de61-11eb-8597-7e83e4c140d0.png">
